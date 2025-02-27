@@ -5,5 +5,5 @@ deploy:
 	@echo "Building Angular application..."
 	cd personal-website && ng build --configuration production
 	@echo "Copying files to web server directory..."
-	sudo cp -r personal-website/dist/* /var/www/vivekpanchagnula.com/
+	sudo cp -r personal-website/dist/personal-website/* /var/www/vivekpanchagnula.com/
 	@echo "Deployment complete!"
