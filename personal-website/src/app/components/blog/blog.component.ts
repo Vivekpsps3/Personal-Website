@@ -5,13 +5,13 @@ import { HeaderComponent } from '../header/header.component';
 
 
 @Component({
-  selector: 'app-about',
+  selector: 'app-blog',
   imports: [RouterModule,
           HeaderComponent
   ],
-  templateUrl: './about.component.html',
-  styleUrl: './about.component.css'
+  templateUrl: './blog.component.html',
+  styleUrls: ['./blog.component.css']
 })
-export class AboutComponent {
-
+export class BlogComponent {
+  testContent = 'This is a test blog content to ensure the blog component works correctly.';
 }

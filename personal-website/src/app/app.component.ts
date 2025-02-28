@@ -7,17 +7,20 @@ import { SkillsComponent } from './components/skills/skills.component';
 import { ExperienceComponent } from './components/experience/experience.component';
 import { ProjectsComponent } from './components/projects/projects.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { HomeComponent } from './components/home/home.component';
 
 
 @Component({
   selector: 'app-root',
   imports: [
     HeaderComponent,
+    HomeComponent,
     AboutComponent,
     SkillsComponent,
     ExperienceComponent,
     ProjectsComponent,
-    FooterComponent
+    FooterComponent,
+    RouterOutlet
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

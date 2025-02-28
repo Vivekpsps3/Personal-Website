@@ -7,6 +7,9 @@ import { ExperienceComponent } from './components/experience/experience.componen
 import { ProjectsComponent } from './components/projects/projects.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { RouterModule } from '@angular/router';
+import { BlogComponent } from './components/blog/blog.component';
+import { AppRoutingModule } from './app.routes'; // Import the routing module
+import { HeaderComponent } from './components/header/header.component'; // Import the header component
 
 @NgModule({
   declarations: [
@@ -15,10 +18,13 @@ import { RouterModule } from '@angular/router';
     SkillsComponent,
     ExperienceComponent,
     ProjectsComponent,
-    FooterComponent
+    FooterComponent,
+    BlogComponent,
+    HeaderComponent // Declare the header component
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule, // Add this line
     RouterModule
   ],
   providers: [],

@@ -1,13 +1,18 @@
 import { Component } from '@angular/core';
+
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  selector: 'app-home',
+  imports: [RouterModule
+          ,HeaderComponent
+  ],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.css'
 })
-export class HeaderComponent {
+export class HomeComponent {
   navigateToAbout() {
     window.location.href = '/about';
   }
@@ -15,4 +20,5 @@ export class HeaderComponent {
   navigateToBlog() {
     window.location.href = '/blog';
   }
+
 }
