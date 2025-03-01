@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AboutComponent } from './components/about/about.component';
 import { SkillsComponent } from './components/skills/skills.component';
@@ -24,6 +25,7 @@ import { HeaderComponent } from './components/header/header.component'; // Impor
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     AppRoutingModule, // Add this line
     RouterModule
   ],

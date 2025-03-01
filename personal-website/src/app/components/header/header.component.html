@@ -1,10 +1,17 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <button (click)="navigateToAbout()" class="btn btn-primary mx-2">About</button>
-                <button (click)="navigateToBlog()" class="btn btn-primary mx-2">Blog</button>
-            </div>
+<div class="sticky-header" [ngClass]="isHeaderVisible ? 'header-visible' : 'header-hidden'">
+    <nav class="selector-bar">
+        <div class="selector-container">
+            <button class="selector-btn" (click)="navigateToHome()">
+                <i class="bi bi-house-door me-2"></i>Home
+            </button>
+            &nbsp;
+            <button class="selector-btn" (click)="navigateToAbout()">
+                <i class="bi bi-person-badge me-2"></i>About Me
+            </button>
+            &nbsp;
+            <button class="selector-btn" (click)="navigateToBlog()">
+                <i class="bi bi-journal-text me-2"></i>Blog
+            </button>
         </div>
-    </div>
-</nav>
+    </nav>
+</div>
