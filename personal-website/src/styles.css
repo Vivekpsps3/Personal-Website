@@ -3,7 +3,6 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     /* Add padding to prevent content from being hidden under sticky header */
-    padding-top: 70px;
   }
   
 section {
@@ -59,7 +58,7 @@ section {
   font-size: 16px;
   font-weight: 500;
   line-height: 28px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Roboto', sans-serif;
   position: relative; /* For pseudo-element positioning */
   margin: 0 4px; /* Add margin between buttons */
 }

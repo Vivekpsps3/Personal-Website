@@ -52,4 +52,7 @@ export class HeaderComponent implements OnInit {
   navigateToBlog() {
     this.router.navigate(['/blog']);
   }
+  navigateToSecrets() {
+    this.router.navigate(['/secrets']);
+  }
 }
