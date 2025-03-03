@@ -16,6 +16,9 @@ export class SecretsComponent {
     this.router.navigate(['/']);
   }
 
-
+  processInput(input: string) {
+    
+    
+  }
 }
 
