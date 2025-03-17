@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -10,10 +9,85 @@ export class EcdhService {
   private sharedKey: Uint8Array | null = null;
   private privateKey!: CryptoKey;
   private publicKey!: CryptoKey;
+  
+  // Add properties to track pending operations
+  private encryptionPromises: Map<string, { resolve: Function, reject: Function }> = new Map();
+  private decryptionPromises: Map<string, { resolve: Function, reject: Function }> = new Map();
+  private messageCounter = 0;
 
   constructor() {
-    this.socket = io('https://vivekpanchagnula.com/api/'); // Connect to Flask server
+    this.socket = io('http://vivekpanchagnula.com/'); // Connect to Flask server
+    // this.socket = io('http://127.0.0.1:5000'); // Connect to Flask server
     this.generateEccKey();
+    this.setupSocketListeners();
+  }
+
+  // Setup socket event listeners
+  private setupSocketListeners() {
+    this.socket.on("encrypted_message", (result) => {
+      console.log("Received encrypted message from server:", result);
+      // Use the first pending promise in the Map
+      if (this.encryptionPromises.size > 0) {
+        const [messageId, pendingPromise] = Array.from(this.encryptionPromises.entries())[0];
+        
+        try {
+          // Convert hex strings to arrays for compatibility
+          const iv = Array.from(this.hexToUint8Array(result.iv));
+          const ciphertext = Array.from(this.hexToUint8Array(result.ciphertext));
+          const tag = Array.from(this.hexToUint8Array(result.tag));
+          
+          pendingPromise.resolve({ iv, ciphertext, tag });
+        } catch (error) {
+          pendingPromise.reject(error);
+        } finally {
+          this.encryptionPromises.delete(messageId);
+        }
+      } else {
+        console.warn("Received encrypted_message but no pending promises found");
+      }
+    });
+
+    this.socket.on("decrypted_message", (result) => {
+      console.log("Received decrypted message from server:", result);
+      // Use the first pending promise in the Map
+      if (this.decryptionPromises.size > 0) {
+        const [messageId, pendingPromise] = Array.from(this.decryptionPromises.entries())[0];
+        pendingPromise.resolve(result.text);
+        this.decryptionPromises.delete(messageId);
+      } else {
+        console.warn("Received decrypted_message but no pending promises found");
+      }
+    });
+
+    this.socket.on("error", (errorData) => {
+      console.error("Socket error:", errorData.message);
+      
+      // Reject the first pending promise in either map
+      if (this.encryptionPromises.size > 0) {
+        const [messageId, pendingPromise] = Array.from(this.encryptionPromises.entries())[0];
+        pendingPromise.reject(new Error(errorData.message));
+        this.encryptionPromises.delete(messageId);
+      }
+      
+      if (this.decryptionPromises.size > 0) {
+        const [messageId, pendingPromise] = Array.from(this.decryptionPromises.entries())[0];
+        pendingPromise.reject(new Error(errorData.message));
+        this.decryptionPromises.delete(messageId);
+      }
+    });
+  }
+  
+  // Helper method to convert hex string to Uint8Array
+  private hexToUint8Array(hexString: string): Uint8Array {
+    if (hexString.length % 2 !== 0) {
+      throw new Error('Hex string must have an even number of characters');
+    }
+    
+    const byteArray = new Uint8Array(hexString.length / 2);
+    for (let i = 0; i < hexString.length; i += 2) {
+      byteArray[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+    }
+    return byteArray;
   }
 
   // 1. Generate ECC Key Pair
@@ -55,76 +129,95 @@ export class EcdhService {
     this.sharedKey = new Uint8Array(sharedSecret);
   }
 
-  // 3. Encrypt Message
+  // 3. Encrypt Message - now using the server
   async encryptMessage(plaintext: string) {
-    const iv = window.crypto.getRandomValues(new Uint8Array(12));
-    const encoded = new TextEncoder().encode(plaintext);
+    if (!this.sharedKey) {
+      throw new Error("Key exchange not complete");
+    }
 
-    const key = await window.crypto.subtle.importKey(
-      "raw", 
-      this.sharedKey!, 
-      { name: "AES-GCM" }, 
-      false, 
-      ["encrypt"]
-    );
-
-    const encryptedBuffer = await window.crypto.subtle.encrypt(
-      { name: "AES-GCM", iv },
-      key,
-      encoded
-    );
-    
-    // Convert to ArrayBuffer to array for display
-    const encryptedArray = Array.from(new Uint8Array(encryptedBuffer));
-
-    // Convert the shared key Uint8Array to hex string using browser-compatible method
-    const sharedKeyHex = Array.from(this.sharedKey!)
+    // Convert the shared key Uint8Array to hex string
+    const sharedKeyHex = Array.from(this.sharedKey)
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
     
-    this.socket.emit("encrypt_message", {
-      message: plaintext,
-      shared_key: sharedKeyHex,
+    // Create a unique message ID
+    const messageId = (this.messageCounter++).toString();
+    
+    return new Promise<any>((resolve, reject) => {
+      // Store the promise callbacks for later resolution
+      this.encryptionPromises.set(messageId, { resolve, reject });
+      
+      // Send to server for encryption
+      console.log("Sending encrypt_message request to server");
+      this.socket.emit("encrypt_message", {
+        message: plaintext,
+        shared_key: sharedKeyHex,
+      });
+      
+      // Set timeout for response
+      setTimeout(() => {
+        if (this.encryptionPromises.has(messageId)) {
+          this.encryptionPromises.delete(messageId);
+          reject(new Error("Encryption request timed out"));
+        }
+      }, 10000); // Increased timeout to 10 seconds
     });
-
-    return { 
-      iv: Array.from(iv), 
-      ciphertext: encryptedArray 
-    };
   }
 
-  // 4. Decrypt Message
+  // 4. Decrypt Message - now using the server
   async decryptMessage(encryptedData: any) {
-    const { iv, ciphertext } = encryptedData;
+    if (!this.sharedKey) {
+      throw new Error("Key exchange not complete");
+    }
+    
+    const { iv, ciphertext, tag } = encryptedData;
     
     if (!iv || !ciphertext) {
       throw new Error("Missing required encryption data (IV or ciphertext)");
     }
     
-    const key = await window.crypto.subtle.importKey(
-      "raw", 
-      this.sharedKey!, 
-      { name: "AES-GCM" }, 
-      false, 
-      ["decrypt"]
-    );
-
-    try {
-      // Convert arrays back to Uint8Arrays
-      const ivArray = new Uint8Array(iv);
-      const ciphertextArray = new Uint8Array(ciphertext);
+    // Convert the shared key Uint8Array to hex string
+    const sharedKeyHex = Array.from(this.sharedKey)
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    
+    // Convert arrays to hex strings for transmission
+    const ivHex = Array.from(iv)
+      .map(b => (typeof b === 'number' ? b : 0).toString(16).padStart(2, '0'))
+      .join('');
+    
+    const ciphertextHex = Array.from(ciphertext)
+      .map(b => (typeof b === 'number' ? b : 0).toString(16).padStart(2, '0'))
+      .join('');
+    
+    const tagHex = tag ? Array.from(tag)
+      .map(b => (typeof b === 'number' ? b : 0).toString(16).padStart(2, '0'))
+      .join('') : '';
+    
+    // Create a unique message ID
+    const messageId = (this.messageCounter++).toString();
+    
+    return new Promise<string>((resolve, reject) => {
+      // Store the promise callbacks for later resolution
+      this.decryptionPromises.set(messageId, { resolve, reject });
       
-      const decrypted = await window.crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: ivArray },
-        key,
-        ciphertextArray
-      );
-
-      return new TextDecoder().decode(decrypted);
-    } catch (error) {
-      console.error("Decryption error:", error);
-      throw error;
-    }
+      // Send to server for decryption
+      console.log("Sending decrypt_message request to server");
+      this.socket.emit("decrypt_message", {
+        shared_key: sharedKeyHex,
+        iv: ivHex,
+        ciphertext: ciphertextHex,
+        tag: tagHex || '00', // Provide a default if tag is not available
+      });
+      
+      // Set timeout for response
+      setTimeout(() => {
+        if (this.decryptionPromises.has(messageId)) {
+          this.decryptionPromises.delete(messageId);
+          reject(new Error("Decryption request timed out"));
+        }
+      }, 15000); // Increased timeout to 10 seconds
+    });
   }
   
   // 5. Check if key exchange is complete

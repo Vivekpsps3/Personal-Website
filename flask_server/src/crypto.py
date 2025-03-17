@@ -2,13 +2,28 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import serialization
 import os
 
 # 1. Generate ECC key pairs
 def generate_ecc_key():
     return ec.generate_private_key(ec.SECP256R1())
 
-# 2. Compute shared secret using ECDH
+# 2. Export public key to raw format
+def export_public_key(public_key):
+    return public_key.public_bytes(
+        encoding=serialization.Encoding.X962,
+        format=serialization.PublicFormat.UncompressedPoint
+    )
+
+# 3. Import public key from raw format
+def import_public_key(public_key_bytes):
+    return ec.EllipticCurvePublicKey.from_encoded_point(
+        ec.SECP256R1(),
+        public_key_bytes
+    )
+
+# 4. Compute shared secret using ECDH
 def compute_shared_secret(private_key, peer_public_key):
     shared_secret = private_key.exchange(ec.ECDH(), peer_public_key)
     
@@ -22,18 +37,18 @@ def compute_shared_secret(private_key, peer_public_key):
     
     return derived_key
 
-# 3. AES-GCM Encryption
+# 5. AES-GCM Encryption
 def encrypt_message(key, plaintext):
     iv = os.urandom(12)  # Generate a random IV
-    cipher = Cipher(algorithms.AES(key), modes.GCM(iv))
+    cipher = Cipher(algorithms.AES(key[:32]), modes.GCM(iv))
     encryptor = cipher.encryptor()
     
     ciphertext = encryptor.update(plaintext.encode()) + encryptor.finalize()
     return iv, encryptor.tag, ciphertext  # Return IV, tag, and encrypted message
 
-# 4. AES-GCM Decryption
+# 6. AES-GCM Decryption
 def decrypt_message(key, iv, tag, ciphertext):
-    cipher = Cipher(algorithms.AES(key), modes.GCM(iv, tag))
+    cipher = Cipher(algorithms.AES(key[:32]), modes.GCM(iv, tag))
     decryptor = cipher.decryptor()
     
     return decryptor.update(ciphertext) + decryptor.finalize()
@@ -43,9 +58,7 @@ def main():
     # Generate key pairs for Alice and Bob
     alice_private = generate_ecc_key()
     bob_private = generate_ecc_key()
-    print("Alice's private key:", alice_private.private_bytes())
-    print("Bob's private key:", bob_private.private_bytes())
-
+    
     # Exchange public keys over an insecure channel
     alice_public = alice_private.public_key()
     bob_public = bob_private.public_key()

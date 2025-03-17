@@ -1,13 +1,11 @@
 from flask import Flask, request
 from flask_socketio import SocketIO, emit
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives import serialization
-
-import os
-import binascii
 import logging
+import os
+
+# Custom imports
+from src import llm
+from src import crypto
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -19,15 +17,12 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Store client session data
 client_sessions = {}
 
-# 1. Generate Server ECC Key Pair
-server_private_key = ec.generate_private_key(ec.SECP256R1())
+# Generate Server ECC Key Pair
+server_private_key = crypto.generate_ecc_key()
 server_public_key = server_private_key.public_key()
 
 # Export the public key in raw format
-server_public_key_bytes = server_public_key.public_bytes(
-    encoding=serialization.Encoding.X962,
-    format=serialization.PublicFormat.UncompressedPoint
-)
+server_public_key_bytes = crypto.export_public_key(server_public_key)
 
 @socketio.on("connect")
 def handle_connect():
@@ -46,20 +41,11 @@ def exchange_keys(client_public_key_hex):
     try:
         logger.info(f"Received client public key: {client_public_key_hex[:20]}...")
         
-        # Convert hex to bytes
-        client_public_key_bytes = bytes.fromhex(client_public_key_hex)
-        
         # Import client public key
-        client_public_key = ec.EllipticCurvePublicKey.from_encoded_point(
-            ec.SECP256R1(), 
-            client_public_key_bytes
-        )
+        client_public_key = crypto.import_public_key(bytes.fromhex(client_public_key_hex))
         
         # Compute shared secret
-        shared_secret = server_private_key.exchange(ec.ECDH(), client_public_key)
-        
-        # Derive symmetric key using SHA-256
-        derived_key = shared_secret
+        derived_key = crypto.compute_shared_secret(server_private_key, client_public_key)
         
         # Store the shared key in the client's session
         client_sessions[request.sid]["shared_key"] = derived_key
@@ -78,23 +64,10 @@ def encrypt_message(data):
     try:
         logger.info("Received encrypt_message request")
         plaintext = data["message"]
-        shared_key_hex = data["shared_key"]
-        shared_key = bytes.fromhex(shared_key_hex)
+        shared_key = bytes.fromhex(data["shared_key"])
         
-        # Generate a random IV
-        iv = os.urandom(12)
-        
-        # Create an encryptor
-        encryptor = Cipher(
-            algorithms.AES(shared_key[:32]),  # Use first 32 bytes for AES-256
-            modes.GCM(iv)
-        ).encryptor()
-        
-        # Encrypt the plaintext
-        ciphertext = encryptor.update(plaintext.encode()) + encryptor.finalize()
-        
-        # Get the tag
-        tag = encryptor.tag
+        # Encrypt using the crypto module
+        iv, tag, ciphertext = crypto.encrypt_message(shared_key, plaintext)
         
         logger.info("Message encrypted successfully")
         
@@ -119,17 +92,10 @@ def decrypt_message(data):
         ciphertext = bytes.fromhex(data["ciphertext"])
         tag = bytes.fromhex(data["tag"])
         
-        # Create a decryptor
-        cipher = Cipher(
-            algorithms.AES(shared_key[:32]),
-            modes.GCM(iv, tag)
-        )
-        decryptor = cipher.decryptor()
+        # Decrypt using the crypto module
+        decrypted_message = crypto.decrypt_message(shared_key, iv, tag, ciphertext)
         
-        # Decrypt the ciphertext
-        decrypted_message = decryptor.update(ciphertext) + decryptor.finalize()
-        
-        emit("decrypted_message", {"text": decrypted_message.decode()})
+        emit("decrypted_message", {"text": llm.get_chat_response(decrypted_message.decode())})
         
     except Exception as e:
         logger.error(f"Error decrypting message: {str(e)}")
