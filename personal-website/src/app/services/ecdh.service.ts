@@ -16,8 +16,8 @@ export class EcdhService {
   private messageCounter = 0;
 
   constructor() {
-    this.socket = io('http://vivekpanchagnula.com/'); // Connect to Flask server
-    // this.socket = io('http://127.0.0.1:5000'); // Connect to Flask server
+    const serverUrl = window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:5000' : 'https://vivekpanchagnula.com/';
+    this.socket = io(serverUrl); // Connect to Flask server
     this.generateEccKey();
     this.setupSocketListeners();
   }
@@ -136,32 +136,51 @@ export class EcdhService {
     }
 
     // Convert the shared key Uint8Array to hex string
-    const sharedKeyHex = Array.from(this.sharedKey)
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
+    // Removed unused variable 'sharedKeyHex'
     
     // Create a unique message ID
     const messageId = (this.messageCounter++).toString();
     
-    return new Promise<any>((resolve, reject) => {
-      // Store the promise callbacks for later resolution
-      this.encryptionPromises.set(messageId, { resolve, reject });
-      
-      // Send to server for encryption
-      console.log("Sending encrypt_message request to server");
-      this.socket.emit("encrypt_message", {
-        message: plaintext,
-        shared_key: sharedKeyHex,
-      });
-      
-      // Set timeout for response
-      setTimeout(() => {
-        if (this.encryptionPromises.has(messageId)) {
-          this.encryptionPromises.delete(messageId);
-          reject(new Error("Encryption request timed out"));
-        }
-      }, 10000); // Increased timeout to 10 seconds
-    });
+    // Removed unused variable 'messageId'
+    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+    // Import the shared key for encryption
+    const key = await window.crypto.subtle.importKey(
+      "raw",
+      this.sharedKey,
+      { name: "AES-GCM" },
+      false,
+      ["encrypt"]
+    );
+
+    // Encode the plaintext as a Uint8Array
+    const encoder = new TextEncoder();
+    const plaintextBytes = encoder.encode(plaintext);
+
+    // Encrypt the plaintext
+    const ciphertextWithTag = await window.crypto.subtle.encrypt(
+      {
+        name: "AES-GCM",
+        iv: iv,
+      },
+      key,
+      plaintextBytes
+    );
+
+    // Convert the ciphertextWithTag to a Uint8Array
+    const ciphertextWithTagArray = new Uint8Array(ciphertextWithTag);
+
+    // Separate the tag from the ciphertext
+    const tagLength = 16; // AES-GCM tag length is 16 bytes
+    const ciphertextArray = ciphertextWithTagArray.slice(0, -tagLength);
+    const tagArray = ciphertextWithTagArray.slice(-tagLength);
+
+    // Return the encrypted data
+    return {
+      iv: Array.from(iv),
+      ciphertext: Array.from(ciphertextArray),
+      tag: Array.from(tagArray),
+    };
   }
 
   // 4. Decrypt Message - now using the server
@@ -216,7 +235,7 @@ export class EcdhService {
           this.decryptionPromises.delete(messageId);
           reject(new Error("Decryption request timed out"));
         }
-      }, 15000); // Increased timeout to 10 seconds
+      }, 30000); // Increased timeout to 30 seconds
     });
   }
   

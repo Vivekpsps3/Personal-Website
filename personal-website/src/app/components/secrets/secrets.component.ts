@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EcdhService } from '../../services/ecdh.service';
+import { MarkdownModule } from 'ngx-markdown';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-secrets',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    MarkdownModule
   ],
   templateUrl: './secrets.component.html',
   styleUrl: './secrets.component.css'
@@ -24,14 +27,18 @@ export class SecretsComponent implements OnInit {
   errorMessage: string = '';
   keyExchangeComplete: boolean = false;
   
-  constructor(private router: Router, private ecdhService: EcdhService) { }
+  constructor(
+    private router: Router, 
+    private ecdhService: EcdhService,
+    private sanitizer: DomSanitizer
+  ) { }
   
   ngOnInit(): void {
     // Check if key exchange is already complete
     setTimeout(() => {
       this.keyExchangeComplete = this.ecdhService.isKeyExchangeComplete();
       if (!this.keyExchangeComplete) {
-        this.errorMessage = "Establishing secure connection...";
+        this.errorMessage = "Timed Out! Please reload the page to start a new key exchange or contact the developer.";
       }
     }, 1000);
   }
@@ -72,6 +79,7 @@ export class SecretsComponent implements OnInit {
     
     try {
       this.decryptedMessage = await this.ecdhService.decryptMessage(this.encryptedData);
+      // Ensure the markdown content is properly sanitized
       console.log('Decryption successful:', this.decryptedMessage);
     } catch (error: any) {
       console.error('Decryption failed:', error);

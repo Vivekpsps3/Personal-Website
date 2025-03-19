@@ -1,7 +1,9 @@
-import { NgModule } from '@angular/core';
+import { NgModule, SecurityContext } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+// Make sure we have the correct import
+import { MarkdownModule } from 'ngx-markdown';
 import { AppComponent } from './app.component';
 import { AboutComponent } from './components/about/about.component';
 import { RouterModule } from '@angular/router';
@@ -23,7 +25,11 @@ import { SecretsComponent } from './components/secrets/secrets.component';
     CommonModule,
     AppRoutingModule, // Add this line
     RouterModule,
-    FormsModule
+    FormsModule,
+    // Make sure to import the module with all required features
+    MarkdownModule.forRoot({
+      sanitize: SecurityContext.HTML
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

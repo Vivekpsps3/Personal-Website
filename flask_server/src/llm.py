@@ -6,7 +6,7 @@ client = Client(
 
 # Send a message to the model
 def get_chat_response(user_input):
-    response = client.chat(model='llama3.2', messages=[
+    response = client.chat(model='gemma3:1b', messages=[
         {
             'role': 'user',
             'content': user_input,
