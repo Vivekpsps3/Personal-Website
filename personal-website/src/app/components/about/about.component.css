@@ -79,6 +79,22 @@ ul {
   box-shadow: 0 10px 15px rgba(0,0,0,0.05);
 }
 
+/* Section headers */
+.section-header {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.section-header h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: inline-block;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--accent-color);
+}
+
 /* Hero section */
 .hero {
   padding: 3rem 2rem;
@@ -131,17 +147,11 @@ ul {
 /* Content sections */
 .content-section {
   position: relative;
+  margin-bottom: 1.5rem;
 }
 
 .content-section h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 1.2rem;
-  position: relative;
-  display: inline-block;
-  padding-bottom: 0.5rem;
-  border-bottom: 3px solid var(--accent-color);
+  display: none;
 }
 
 /* Education */
@@ -179,9 +189,9 @@ ul {
 
 /* Experience & Projects */
 .list-entry {
-  margin-bottom: 1.8rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px dashed var(--border-color);
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .list-entry h3 {
@@ -238,6 +248,10 @@ ul {
   .section-card {
     padding: 1.75rem;
   }
+  
+  .section-header h2 {
+    font-size: 1.6rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -255,6 +269,10 @@ ul {
   
   .list-entry h3 {
     font-size: 1.1rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.4rem;
   }
 }
 
@@ -287,6 +305,10 @@ ul {
   }
   
   .content-section h2 {
+    font-size: 1.3rem;
+  }
+  
+  .section-header h2 {
     font-size: 1.3rem;
   }
 }
