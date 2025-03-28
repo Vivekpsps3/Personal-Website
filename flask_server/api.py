@@ -260,7 +260,6 @@ async def stream_real_response(model_id: str, stream_id: str, messages: List[Ope
     )
     yield f"data: {first_chunk_data.model_dump_json(exclude_unset=True)}\n\n"
     print(f"Sent chunk: {first_chunk_data.model_dump_json(exclude_unset=True)}")
-    await asyncio.sleep(0.1) # Simulate processing time
 
     # 2. Send content chunks
     for i, word in enumerate(words):
@@ -276,7 +275,6 @@ async def stream_real_response(model_id: str, stream_id: str, messages: List[Ope
         )
         yield f"data: {chunk_data.model_dump_json(exclude_unset=True)}\n\n"
         print(f"Sent chunk: {chunk_data.model_dump_json(exclude_unset=True)}")
-        await asyncio.sleep(0.1) # Simulate processing time
 
     # 3. Send the final chunk with finish_reason
     final_chunk_data = OpenAiCompatibleChatCompletionChunk(
@@ -291,7 +289,6 @@ async def stream_real_response(model_id: str, stream_id: str, messages: List[Ope
     )
     yield f"data: {final_chunk_data.model_dump_json(exclude_unset=True)}\n\n"
     print(f"Sent chunk: {final_chunk_data.model_dump_json(exclude_unset=True)}")
-    await asyncio.sleep(0.1)
 
     # 4. Send the [DONE] signal
     yield "data: [DONE]\n\n"
