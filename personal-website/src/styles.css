@@ -1,73 +1,114 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Global Variables and Color Scheme */
+:root {
+  --bg-color: #f8f9fa;
+  --card-bg: #ffffff;
+  --text-primary: #151515;
+  --text-secondary: #444444;
+  --text-muted: #777777;
+  --border-color: #e5e7eb;
+  --accent-color: #000000; /* Changed from #3355ff to black */
+  --accent-hover: #333333; /* Changed from #2244ee to dark gray */
+  --section-spacing: 2rem;
+  --border-radius: 12px;
+  --shadow-sm: 0 4px 6px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.08);
+  --transition-speed: 0.2s;
+}
+
+/* Base Styles */
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    /* Add padding to prevent content from being hidden under sticky header */
-  }
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   
-section {
-  margin: 20px;
-  padding: 20px;
-  border-radius: 10px;
-  background: #f4f4f4;
-}
-.header {
-    color: white;
-    text-align: center;
-    padding: 5rem;
-    margin: 40px 20px;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #111111, #252525);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
-.header h1 {
-    color: black;
-    letter-spacing: 1px;
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
 }
 
-.header p {
-    color: #aaaaaa;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-.header .btn-outline-light {
-    padding: 0.5rem 2rem;
+/* Global Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  position: relative;
 }
 
-.header .btn-dark {
-    padding: 0.5rem 2rem;
-    border: 1px solid #333;
+/* Button Styles */
+.btn {
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  transition: all var(--transition-speed) ease;
+  cursor: pointer;
+  border: none;
+  text-align: center;
 }
 
-.custom-btn {
-    padding: 0.5rem 2rem;
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.05);
 }
 
-.custom-btn-dark {
-    padding: 0.5rem 2rem;
-    border: 1px solid #333;
+.btn-primary {
+  background-color: var(--accent-color);
+  color: white;
 }
 
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+/* Selector Button Style */
 .selector-btn {
-  transition: transform 0.3s, box-shadow 0.3s, background-color 0.2s ease;
+  transition: transform var(--transition-speed), 
+              box-shadow var(--transition-speed), 
+              background-color var(--transition-speed) ease;
   background: none;
   border: none;
-  border-radius: 16px;
-  padding: 8px 6px; /* Increased padding for more space */
+  border-radius: var(--border-radius);
+  padding: 8px 12px;
   cursor: pointer;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 28px;
-  font-family: 'Roboto', sans-serif;
-  position: relative; /* For pseudo-element positioning */
-  margin: 0 4px; /* Add margin between buttons */
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  margin: 0 4px;
+  color: var(--text-secondary);
 }
 
 .selector-btn:hover {
   transform: translateY(-3px);
+  color: var(--accent-color);
 }
 
-/* Create pseudo-element for the hover animation */
 .selector-btn::after {
   content: '';
   position: absolute;
@@ -75,8 +116,8 @@ section {
   left: 50%;
   width: 100%;
   height: 100%;
-  background-color: rgba(133, 133, 133, 0.1);
-  border-radius: 16px;
+  background-color: rgba(0, 0, 0, 0.1); /* Changed from rgba(51, 85, 255, 0.1) */
+  border-radius: var(--border-radius);
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.8);
   transition: transform 0.3s ease-out, opacity 0.3s ease-out;
@@ -85,72 +126,59 @@ section {
 
 .selector-btn:hover::after {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1.2); /* Makes hover effect extend beyond button */
+  transform: translate(-50%, -50%) scale(1.2);
 }
 
-.selector-container {
-  border-radius: 30px;
-  display: inline-block;
-  padding: 14px 24px;
-  border: 1px solid #a9a9a9;
-  box-shadow: 0 4px 8px rgba(66, 66, 66, 0.3);
-  width: 80%; /* Makes the container wider */
-  max-width: 800px; /* Prevents it from becoming too wide on large screens */
-  margin: 0 auto; /* Centers the container */
-  background: #f4f4f4;
-}
-
-/* Markdown formatting styles */
-.markdown-container {
-  padding: 15px;
-  background-color: #f5f5f5;
-  border-radius: 5px;
-}
-
-.markdown-container h1,
-.markdown-container h2,
-.markdown-container h3,
-.markdown-container h4 {
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  line-height: 1.2;
-}
-
-.markdown-container code {
-  background-color: #e9e9e9;
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-family: 'Courier New', Courier, monospace;
-}
-
-.markdown-container pre {
-  background-color: #333;
-  color: #f8f8f8;
-  padding: 10px;
-  border-radius: 4px;
-  overflow-x: auto;
-}
-
-.markdown-container blockquote {
-  border-left: 4px solid #ccc;
-  margin-left: 0;
-  padding-left: 15px;
-  color: #555;
-}
-
-.markdown-container table {
-  border-collapse: collapse;
+/* Common Input Styling */
+.text-input {
   width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  resize: vertical;
+  transition: border-color var(--transition-speed);
 }
 
-.markdown-container table, 
-.markdown-container th, 
-.markdown-container td {
-  border: 1px solid #ddd;
-  padding: 8px;
+.text-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3); /* Changed from rgba(51, 85, 255, 0.3) */
 }
 
-.markdown-container th {
-  background-color: #f2f2f2;
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .container {
+    max-width: 90%;
+  }
 }
+
+@media (max-width: 768px) {
+  .container {
+    max-width: 95%;
+  }
+  
+  .selector-btn {
+    padding: 6px 8px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  html {
+    font-size: 15px;
+  }
+  
+  .container {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+  
+  .selector-btn {
+    padding: 5px 6px;
+    font-size: 13px;
+    margin: 0 2px;
+  }
+}
+

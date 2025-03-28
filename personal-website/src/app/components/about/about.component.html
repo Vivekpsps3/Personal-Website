@@ -1,78 +1,123 @@
-<app-header></app-header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivek Panchagnula - Portfolio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Your Core Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
-    <header>
-        <h1>Vivek Panchagnula</h1>
-        <p>U.S. Permanent Resident | Computer Engineer | AI & ML Enthusiast</p>
-        <div class="links">
-            <a href="https://github.com/Vivekpsps3" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-            <a href="https://linkedin.com/in/vivek-panchagnula" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
-            <a href="mailto:vivek.panchagnula@gmail.com"><i class="fas fa-envelope"></i> Email</a>
-        </div>
-    </header>
-    
-    <div class="container">
-        <div class="section">
+
+    <app-header></app-header>
+
+    <main class="container">
+        <section class="hero section-card">
+            <div class="hero-content">
+                <h1>Vivek Panchagnula</h1>
+                <p class="subtitle">U.S. Permanent Resident | Computer Engineer | AI & ML Enthusiast</p>
+                <div class="contact-links">
+                    <a href="https://github.com/Vivekpsps3" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <i class="fab fa-github"></i><span>GitHub</span>
+                    </a>
+                    <a href="https://linkedin.com/in/vivek-panchagnula" target="_blank" rel="noopener noreferrer" class="link-item">
+                        <i class="fab fa-linkedin"></i><span>LinkedIn</span>
+                    </a>
+                    <a href="mailto:vivek.panchagnula@gmail.com" class="link-item">
+                        <i class="fas fa-envelope"></i><span>Email</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="education" class="content-section section-card">
             <h2>Education</h2>
-            <p><strong>Purdue University, West Lafayette, IN</strong> - GPA: 3.8/4.0</p>
-            <p>M.S. in Computer Engineering, Concentration in AI & ML (August 2025)</p>
-            <p>B.S. in Computer Engineering, Minor in Mathematics (December 2024)</p>
-            <p><em>Awards: Gold President’s Volunteering Service Award, Dean’s List, Academic Merit Scholarship</em></p>
-        </div>
-        
-        <div class="section">
+            <div class="education-entry">
+                <p><strong>Purdue University, West Lafayette, IN</strong></p>
+                <p class="details">M.S. Computer Engineering, AI & ML (Expected Aug 2025)</p>
+                <p class="details">B.S. Computer Engineering, Minor in Mathematics (Dec 2024)</p>
+                <p class="details">GPA: 3.8/4.0 | Awards: <em>Gold President's Volunteering Service Award, Dean's List, Academic Merit Scholarship</em></p>
+            </div>
+        </section>
+
+        <section id="skills" class="content-section section-card">
             <h2>Skills</h2>
-            <p><strong>Languages:</strong> C, Python, System Verilog, ARM Assembly, MATLAB, C++, Java, JavaScript, Bash, HTML/CSS, SQL</p>
-            <p><strong>Software Engineering:</strong> Agile, Git, Docker, Full-stack development, Kubernetes, TDD, CI/CD, Jira, Confluence, RESTful API, MongoDB</p>
-        </div>
-        
-        <div class="section">
+            <div class="skill-list">
+                <p><strong>Languages:</strong> C, Python, System Verilog, ARM Assembly, MATLAB, C++, Java, JavaScript, Bash, HTML/CSS, SQL</p>
+                <p><strong>Software Engineering:</strong> Agile, Git, Docker, Full-stack development, Kubernetes, TDD, CI/CD, Jira, Confluence, RESTful API, MongoDB</p>
+            </div>
+        </section>
+
+        <section id="experience" class="content-section section-card">
             <h2>Experience</h2>
-            <h3>Tesla - Data Intern (Aug 2023 - Dec 2023)</h3>
-            <ul>
-                <li>Developed an LLM and NLP based platform to automate validation of 100k line items, previously processed by hand.</li>
-                <li>Negotiated $1.1 million in contracts using cost-benefit analysis, saving $400k in engineering budgets across 12 teams.</li>
-                <li>Designed a Python-based analytics application incorporating predictive algorithms to forecast $10k in cost savings.</li>
-                <li>Analyzed vehicle logs data with Splunk to identify trends, providing insights for debugging and designing dashboards.</li>
-            </ul>
-            
-            <h3>Purdue University - GTA & Software Engineer (Oct 2024 - Present)</h3>
-            <ul>
-                <li>Supervised 710 students across 4 advanced computer engineering courses in embedded C, Verilog, and Assembly.</li>
-                <li>Rebased outdated codebase to Python 3, cutting assignment processing time by 50% with automated grading.</li>
-                <li>Redesigned course platform for 99.9% uptime and immediate updates, improving reliability and student experience.</li>
-            </ul>
-        </div>
-        
-        <div class="section">
+            <div class="list-entry">
+                <h3>Tesla - Data Intern</h3>
+                <p class="details"><em>Aug 2023 - Dec 2023</em></p>
+                <ul>
+                    <li>Developed LLM/NLP platform automating 100k line item validation.</li>
+                    <li>Negotiated $1.1M in contracts via cost-benefit analysis, saving $400k.</li>
+                    <li>Designed Python analytics app forecasting $10k cost savings.</li>
+                    <li>Analyzed vehicle logs with Splunk for debugging and dashboard insights.</li>
+                </ul>
+            </div>
+            <div class="list-entry">
+                <h3>Purdue University - GTA & Software Engineer</h3>
+                <p class="details"><em>Oct 2024 - Present</em></p>
+                <ul>
+                    <li>Supervised 710 students (Embedded C, Verilog, Assembly courses).</li>
+                    <li>Rebased codebase to Python 3, cutting assignment processing time by 50%.</li>
+                    <li>Redesigned course platform for 99.9% uptime and improved student experience.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="projects" class="content-section section-card">
             <h2>Projects</h2>
-            <h3>Secure Air-gapped LLM Inference, RSA Ring Signatures</h3>
-            <ul>
-                <li>Created a custom LLM Inference methodology for securely processing sensitive user information efficiently.</li>
-                <li>Implemented AES-256, SHA-1, and ECC for securing data and validating digital sender and receiver credentials.</li>
-                <li>Engineered a TCP algorithm for data transmission with data loss resilience, high latency resistance, and low overhead.</li>
-                <li>Conducted security validation against many attack vectors, ensuring robust data protection and user confidentiality.</li>
-            </ul>
-            
-            <h3>Dancing Purdue Pete</h3>
-            <ul>
-                <li>Served as Software Lead for a project featured on Purdue's social media and competed in the Spark Challenge.</li>
-                <li>Developed software using Spotify API for state management, playback control, and robot motion synchronization.</li>
-                <li>Programmed firmware for STM32 microcontroller to manage multiple servo motors and calculate robotic movements.</li>
-                <li>Utilized hardware SPI display with custom drivers on Raspberry Pi to display music album art at 50MHZ refresh rate.</li>
-            </ul>
-            <h3>AI Agentic Workflow Portfolio, Thinkerbot</h3>
-            <ul>
-                <li>Designed an API-powered chatbot using locally deployed LLMs for dynamic AI interactions.</li>
-                <li>Optimized local ML inference through Python asyncio, queue management, and dynamic memory allocation.</li>
-                <li>Applied socket programming with a database of user requests, enabling persistent AI interactions over time.</li>
-            </ul>
-            
-            <h3>Datacenter Network Design</h3>
-            <ul>
-                <li>Implemented ECMP routing on scalable switch architectures to improve link utilization and boost network efficiency.</li>
-                <li>Created a novel ABR algorithm to dynamically adjust to network and device conditions for optimal video delivery.</li>
-                <li>Developed transport and routing algorithms to achieve 100% link bandwidth usage in datacenters, eliminating bandwidth wastage.</li>
-            </ul>
-        </div>
-    </div>
+            <div class="list-entry">
+                <h3>Secure Air-gapped LLM Inference, RSA Ring Signatures</h3>
+                <ul>
+                    <li>Created custom LLM Inference methodology for secure, efficient processing.</li>
+                    <li>Implemented AES-256, SHA-1, ECC for data security and credential validation.</li>
+                    <li>Engineered resilient TCP algorithm for high-latency, lossy networks.</li>
+                    <li>Conducted security validation against multiple attack vectors.</li>
+                </ul>
+            </div>
+            <div class="list-entry">
+                <h3>Dancing Purdue Pete</h3>
+                <ul>
+                    <li>Software Lead for project featured on Purdue's social media (Spark Challenge).</li>
+                    <li>Developed software using Spotify API for state management & robot sync.</li>
+                    <li>Programmed STM32 firmware for servo control and movement calculation.</li>
+                    <li>Utilized Raspberry Pi with custom SPI drivers for 50MHz album art display.</li>
+                </ul>
+            </div>
+            <div class="list-entry">
+                <h3>AI Agentic Workflow Portfolio, Thinkerbot</h3>
+                <ul>
+                    <li>Designed API chatbot using local LLMs for dynamic AI interactions.</li>
+                    <li>Optimized local ML inference via Python asyncio, queues, dynamic memory.</li>
+                    <li>Applied socket programming and database for persistent AI interactions.</li>
+                </ul>
+            </div>
+            <div class="list-entry">
+                <h3>Datacenter Network Design</h3>
+                <ul>
+                    <li>Implemented ECMP routing on scalable switches for improved link utilization.</li>
+                    <li>Created novel ABR algorithm for dynamic video delivery optimization.</li>
+                    <li>Developed transport/routing algorithms achieving 100% link bandwidth usage.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; <span id="current-year">2025</span> Vivek Panchagnula</p>
+    </footer>
 </body>
+</html>
