@@ -138,18 +138,22 @@ async def create_chat_completion(
         )
     else:
         # Return a standard JSON response
-        return create_real_response(request.model, request.messages)
+        return await create_real_response(request.model, request.messages)
 
 # --- Helper Functions for Responses ---
 
-def create_real_response(model_id: str, messages: List[OpenAiCompatibleChatMessage]) -> OpenAiCompatibleChatCompletionResponse:
+async def create_real_response(model_id: str, messages: List[OpenAiCompatibleChatMessage]) -> OpenAiCompatibleChatCompletionResponse:
     """Generates a real non-streaming chat completion response using copilot_chatter."""
     try:
+        # Set the model in copilot_chatter
+        copilot_chatter.set_model(model_id)
+        print(f"Setting model in copilot_chatter to: {model_id}")
+
         # Convert messages to the format expected by copilot_chatter
         formatted_messages = [{"role": msg.role, "content": msg.content} for msg in messages]
         
         # Call the chat function from copilot_chatter
-        response_content = copilot_chatter.chat(message=formatted_messages)
+        response_content = await copilot_chatter.chat(message=formatted_messages)
         
         # Create the response message
         response_message = OpenAiCompatibleChatMessage(role="assistant", content=response_content)

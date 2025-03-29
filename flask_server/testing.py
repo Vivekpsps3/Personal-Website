@@ -7,6 +7,12 @@ client = OpenAI(
   api_key = api_key
 )
 
+
+# client = OpenAI(
+#   base_url = "http://192.168.0.181:8085",
+#   api_key = api_key
+# )
+
 # Get available models
 try:
     models = client.models.list()
@@ -18,17 +24,17 @@ except Exception as e:
 
 completion = client.chat.completions.create(
   model="gpt-4o",
-  messages=[{"role":"system","content":"detailed thinking on"},{"role":"user","content":"Explain how a transformer neural network works."}],
+  messages=[{"role":"system","content":"detailed thinking on"},{"role":"user","content":"Test."}],
   temperature=0.6,
   top_p=0.7,
   max_tokens=4096,
   frequency_penalty=0,
   presence_penalty=0,
-  stream=True
+  stream=False
 )
 
-# print("Completion response:")
-# print(completion)
+print("Completion response:")
+print(completion)
 
 for chunk in completion:
   if chunk.choices[0].delta.content is not None:
